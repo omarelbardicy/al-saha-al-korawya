@@ -462,11 +462,16 @@ function Act(){
 
 /* ============================ ٤. المزاد ============================ */
 function Bid(){
-  const st={p:pick("bid",POOL),phase:"bid",n:12,max:20,holder:null,bid:null,q:0,show:false,ok:null};
+  const st={p:pick("bid",POOL),phase:"host",n:12,max:20,holder:null,bid:null,q:0,show:false,ok:null};
   CUR={render};
   function render(){
     let body="";
-    if(st.phase==="bid") body=`<div class="card stack center">
+    if(st.phase==="host") body=`<div class="card stack center">
+      <p style="margin:0;font-weight:800;color:var(--flood)">الحكم بس يشوف الشاشة دي</p>
+      <span><span class="tag">${esc(st.p.t)}</span></span><div class="big">${esc(st.p.n)}</div>
+      <p class="mut" style="margin:0">احفظ الاسم كويس، إنت اللي هترد على الأسئلة بآه أو لأ</p>
+      <button class="btn pri" id="hide">حفظته، اخفي الاسم وابدأ المزاد</button><button class="btn" id="swap">هات لاعب تاني</button></div>`;
+    else if(st.phase==="bid") body=`<div class="card stack center">
       <p class="mut" style="margin:0">اللاعب الجاي</p><div><span class="tag" style="font-size:16px">${esc(st.p.t)}</span></div>
       <p class="mut" style="margin:0">كام سؤال آه ولأ زميلك محتاج يعرفه في ٣٠ ثانية؟</p>
       <div class="step"><button id="plus" aria-label="زود">+</button><div class="bidn">${ar(st.n)}</div><button id="minus" aria-label="نقص">−</button></div>
@@ -484,8 +489,10 @@ function Bid(){
       <button class="btn" id="peek">${st.show?"اخفي الاسم":"الحكم يشوف الاسم"}</button>${st.show?`<div class="ans">${esc(st.p.n)}</div>`:""}</div>`;
     else body=`<div class="card stack center"><p style="margin:0;font-weight:800;color:var(--${st.ok?"ok":"bad"})">${st.ok?`${tn(st.holder)} كسب الرهان (+٣)`:`الرهان وقع، ${tn(1-st.holder)} ياخد ٣ نقط`}</p>
       <div class="big">${esc(st.p.n)}</div><button class="btn pri" id="nx">مزاد جديد</button></div>`;
-    screen(head("المزاد",`فاضل ${ar(left("bid",POOL))} لاعب`,"الفريقين بيزايدوا بالدور: كل مزايدة لازم تبقى <b>أقل</b> من اللي قبلها. اللي يكسب المزاد زميله يسأل أسئلة <b>آه أو لأ</b> بس في <b>٣٠ ثانية</b>. عرفه = <b>٣ نقط</b> ليه، معرفوش = <b>٣ نقط</b> للفريق التاني.")+body);
+    screen(head("المزاد",`فاضل ${ar(left("bid",POOL))} لاعب`,"الحكم بيشوف اللاعب الأول ويحفظه. بعدين الفريقين بيزايدوا بالدور: كل مزايدة لازم تبقى <b>أقل</b> من اللي قبلها. اللي يكسب المزاد زميله يسأل أسئلة <b>آه أو لأ</b> بس في <b>٣٠ ثانية</b>. عرفه = <b>٣ نقط</b> ليه، معرفوش = <b>٣ نقط</b> للفريق التاني.")+body);
     const $=id=>document.getElementById(id);
+    $("hide")&&($("hide").onclick=()=>{st.phase="bid";render();});
+    $("swap")&&($("swap").onclick=()=>{st.p=pick("bid",POOL);render();});
     $("plus")&&($("plus").onclick=()=>{if(st.n<st.max){st.n++;render();}});
     $("minus")&&($("minus").onclick=()=>{if(st.n>1){st.n--;render();}});
     app.querySelectorAll("[data-b]").forEach(b=>b.onclick=()=>{
